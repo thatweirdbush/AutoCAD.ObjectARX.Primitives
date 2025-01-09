@@ -14,6 +14,7 @@
     <ClCompile Include="acrxEntryPoint.cpp" />
     <ClCompile Include="DocData.cpp" />
     <ClCompile Include="FirstArxProject.cpp" />
+    <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="PrimitiveEntities.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -24,6 +25,7 @@
   <ItemGroup>
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DocData.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="PrimitiveEntities.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />

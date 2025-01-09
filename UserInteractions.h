@@ -2,6 +2,7 @@
 //-----------------------------------------------------------------------------
 //----- Here you can include utility headers
 #include "Constants.h"
+#include "Helpers.h"
 
 //-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD user interactions functions
