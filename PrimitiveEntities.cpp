@@ -7,8 +7,7 @@
 //-----------------------------------------------------------------------------
 //----- This will define the static members of the PrimitiveEntities class
 //-----------------------------------------------------------------------------
-
-void ADSK_PrimitiveEntities::ADSK_TEST_DRAW_LINE()
+void PrimitiveEntities::ADSK_TEST_CREATE_LINE()
 {
 	AcGePoint3d startPt(10.0, 10.0, 0.0);
 	AcGePoint3d endPt(30.0, 10.0, 0.0);
@@ -30,7 +29,7 @@ void ADSK_PrimitiveEntities::ADSK_TEST_DRAW_LINE()
 	pLine->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_DRAW_CIRCLE()
+void PrimitiveEntities::ADSK_TEST_CREATE_CIRCLE()
 {
 	AcGePoint3d center(9.0, 3.0, 0.0);
 	AcGeVector3d normal(0.0, 0.0, 1.0);
@@ -53,7 +52,7 @@ void ADSK_PrimitiveEntities::ADSK_TEST_DRAW_CIRCLE()
 	pCirc->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_MTEXT()
+void PrimitiveEntities::ADSK_TEST_CREATE_MTEXT()
 {
 	AcDbMText* pMText = new AcDbMText();
 	pMText->setLocation(AcGePoint3d(10.0, 10.0, 0.0));
@@ -75,12 +74,12 @@ void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_MTEXT()
 	pMText->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_ARC()
+void PrimitiveEntities::ADSK_TEST_CREATE_ARC()
 {
 	AcGePoint3d center(10.0, 10.0, 0.0);
 	double radius = 10.0;
 	double startAngle = 0.0;
-	double endAngle = Pi / 2.0;
+	double endAngle = MathConstants::Pi / 2.0;
 
 	AcDbArc* pArc = new AcDbArc(center, radius, startAngle, endAngle);
 
@@ -99,7 +98,7 @@ void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_ARC()
 	pArc->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_POLYLINE()
+void PrimitiveEntities::ADSK_TEST_CREATE_POLYLINE()
 {
 	AcDbPolyline* pPoly = new AcDbPolyline(4);
 	pPoly->addVertexAt(0, AcGePoint2d(0.0, 0.0));
@@ -123,7 +122,7 @@ void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_POLYLINE()
 	pPoly->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_NEW_LAYER()
+void PrimitiveEntities::ADSK_TEST_CREATE_NEW_LAYER()
 {
 	AcDbLayerTable* pLayerTable;
 
@@ -143,9 +142,43 @@ void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_NEW_LAYER()
 	pLayerTableRecord->close();
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_PRINT_ALL()
+void PrimitiveEntities::ADSK_TEST_CREATE_NEW_BLOCK()
 {
-	int rc;
+	// Create and name a new block table record.
+	//
+	AcDbBlockTableRecord* pBlockTableRec
+		= new AcDbBlockTableRecord();
+	pBlockTableRec->setName(L"ASDK-NO-ATTR");
+
+	// Get the block table.
+	//
+	AcDbBlockTable* pBlockTable = NULL;
+	acdbHostApplicationServices()->workingDatabase()
+		->getSymbolTable(pBlockTable, AcDb::kForWrite);
+
+	// Add the new block table record to the block table.
+	//
+	AcDbObjectId blockTableRecordId;
+	pBlockTable->add(blockTableRecordId, pBlockTableRec);
+	pBlockTable->close();
+
+	// Create and add a line entity to the component's
+	// block record.
+	//
+	AcDbLine* pLine = new AcDbLine();
+	AcDbObjectId lineId;
+	pLine->setStartPoint(AcGePoint3d(3, 3, 0));
+	pLine->setEndPoint(AcGePoint3d(6, 6, 0));
+	pLine->setColorIndex(3); // Green
+
+	pBlockTableRec->appendAcDbEntity(lineId, pLine);
+	pLine->close();
+	pBlockTableRec->close();
+}
+
+void PrimitiveEntities::ADSK_TEST_PRINT_ALL_FROM_BLOCK()
+{
+	int rc; // Return code
 	wchar_t blkName[50];
 	rc = acedGetString(Adesk::kTrue,
 		L"Enter Block Name <CR for current space>: ",
@@ -154,6 +187,8 @@ void ADSK_PrimitiveEntities::ADSK_TEST_PRINT_ALL()
 	if (rc != RTNORM)
 		return;
 
+	// If the user did not enter a block name, set the
+	// block name to the current space.
 	if (blkName[0] == '\0') {
 		if (acdbHostApplicationServices()->workingDatabase()
 			->tilemode() == Adesk::kFalse) {
@@ -204,41 +239,7 @@ void ADSK_PrimitiveEntities::ADSK_TEST_PRINT_ALL()
 	acutPrintf(L"\n");
 }
 
-void ADSK_PrimitiveEntities::ADSK_TEST_CREATE_NEW_BLOCK()
-{
-	// Create and name a new block table record.
-	//
-	AcDbBlockTableRecord* pBlockTableRec
-		= new AcDbBlockTableRecord();
-	pBlockTableRec->setName(L"ASDK-NO-ATTR");
-
-	// Get the block table.
-	//
-	AcDbBlockTable* pBlockTable = NULL;
-	acdbHostApplicationServices()->workingDatabase()
-		->getSymbolTable(pBlockTable, AcDb::kForWrite);
-
-	// Add the new block table record to the block table.
-	//
-	AcDbObjectId blockTableRecordId;
-	pBlockTable->add(blockTableRecordId, pBlockTableRec);
-	pBlockTable->close();
-
-	// Create and add a line entity to the component's
-	// block record.
-	//
-	AcDbLine* pLine = new AcDbLine();
-	AcDbObjectId lineId;
-	pLine->setStartPoint(AcGePoint3d(3, 3, 0));
-	pLine->setEndPoint(AcGePoint3d(6, 6, 0));
-	pLine->setColorIndex(3); // Green
-
-	pBlockTableRec->appendAcDbEntity(lineId, pLine);
-	pLine->close();
-	pBlockTableRec->close();
-}
-
-void ADSK_PrimitiveEntities::ADSK_TEST_PRINT_LINETYPES()
+void PrimitiveEntities::ADSK_TEST_PRINT_LINETYPES()
 {
 	AcDbLinetypeTable* pLinetypeTbl;
 	acdbHostApplicationServices()->workingDatabase()

@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "PrimitiveEntities.h"
+#include "UserInteractions.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("DD")
@@ -132,21 +133,77 @@ public:
 
 	//	return (RTNORM) ;
 	//}
+
+	//-------------------------------------------------------------------------
+	//----- AutoCAD commands from PrimitiveEntities class
+	//-------------------------------------------------------------------------
+	static void ADSK_TEST_CREATE_LINE() {
+		PrimitiveEntities::ADSK_TEST_CREATE_LINE();
+	}
+
+	static void ADSK_TEST_CREATE_CIRCLE() {
+		PrimitiveEntities::ADSK_TEST_CREATE_CIRCLE();
+	}
+
+	static void ADSK_TEST_CREATE_MTEXT() {
+		PrimitiveEntities::ADSK_TEST_CREATE_MTEXT();
+	}
+
+	static void ADSK_TEST_CREATE_ARC() {
+		PrimitiveEntities::ADSK_TEST_CREATE_ARC();
+	}
+
+	static void ADSK_TEST_CREATE_POLYLINE() {
+		PrimitiveEntities::ADSK_TEST_CREATE_POLYLINE();
+	}
+
+	static void ADSK_TEST_CREATE_NEW_LAYER() {
+		PrimitiveEntities::ADSK_TEST_CREATE_NEW_LAYER();
+	}
+
+	static void ADSK_TEST_CREATE_NEW_BLOCK() {
+		PrimitiveEntities::ADSK_TEST_CREATE_NEW_BLOCK();
+	}
+
+	static void ADSK_TEST_PRINT_ALL_FROM_BLOCK() {
+		PrimitiveEntities::ADSK_TEST_PRINT_ALL_FROM_BLOCK();
+	}
+
+	static void ADSK_TEST_PRINT_LINETYPES() {
+		PrimitiveEntities::ADSK_TEST_PRINT_LINETYPES();
+	}
+
+	//-------------------------------------------------------------------------
+	//----- AutoCAD commands from UserInteractions class
+	//-------------------------------------------------------------------------
+	static void ADSK_TEST_GET_NAME_USING_GET_STRING() {
+		UserInteractions::ADSK_TEST_GET_NAME_USING_GET_STRING();
+	}
+
+	static void ADSK_TEST_CREATE_LINE_USING_GET_POINT() {
+		UserInteractions::ADSK_TEST_CREATE_LINE_USING_GET_POINT();
+	}
 } ;
 
 //-----------------------------------------------------------------------------
-//----- Here you can declare AutoCAD commands from ADSK_PrimitiveEntities class
-IMPLEMENT_ARX_ENTRYPOINT(ADSK_PrimitiveEntities)
+//----- Implementation macro of main AutoCAD entry point
+IMPLEMENT_ARX_ENTRYPOINT(CFirstArxProjectApp)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_DRAW_LINE, TEST_DRAW_LINE, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_DRAW_CIRCLE, TEST_DRAW_CIRCLE, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_CREATE_MTEXT, TEST_CREATE_MTEXT, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_CREATE_ARC, TEST_CREATE_ARC, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_CREATE_POLYLINE, TEST_CREATE_POLYLINE, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_CREATE_NEW_LAYER, TEST_CREATE_NEW_LAYER, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_PRINT_ALL, TEST_PRINT_ALL, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_CREATE_NEW_BLOCK, TEST_CREATE_NEW_BLOCK, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(ADSK_PrimitiveEntities, ADSK, _TEST_PRINT_LINETYPES, TEST_PRINT_LINETYPES, ACRX_CMD_MODAL, NULL)
+//----- Here you can declare AutoCAD commands from ADSK_PrimitiveEntities class
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_LINE, TEST_CREATE_LINE, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_CIRCLE, TEST_CREATE_CIRCLE, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_MTEXT, TEST_CREATE_MTEXT, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_ARC, TEST_CREATE_ARC, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_POLYLINE, TEST_CREATE_POLYLINE, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_NEW_LAYER, TEST_CREATE_NEW_LAYER, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_CREATE_NEW_BLOCK, TEST_CREATE_NEW_BLOCK, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_PRINT_ALL_FROM_BLOCK, TEST_PRINT_ALL_FROM_BLOCK, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, ADSK, _TEST_PRINT_LINETYPES, TEST_PRINT_LINETYPES, ACRX_CMD_MODAL, NULL)
+
+//----- Here you can declare AutoCAD commands from ADSK_UserInteractions class
+ACED_ARXCOMMAND_ENTRY_AUTO(UserInteractions, ADSK, _TEST_GET_NAME_USING_GET_STRING, TEST_GET_NAME_USING_GET_STRING, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(UserInteractions, ADSK, _TEST_CREATE_LINE_USING_GET_POINT, TEST_CREATE_LINE_USING_GET_POINT, ACRX_CMD_MODAL, NULL)
+
 
 //ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, DDMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
 //ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, DDMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
