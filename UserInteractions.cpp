@@ -217,4 +217,185 @@ void UserInteractions::ADSK_TEST_MOVE_OBJECT_USING_GET_POINT()
 	pEnt->close();
 }
 
+void UserInteractions::ADSK_TEST_MOVE_OBJECT_WITH_ALLOWED_CLASS()
+{
+	// Get the selected object
+	ads_name en;
+	ads_point pt;
+	if (acedEntSel(L"\nSelect an object: ", en, pt) != RTNORM)
+	{
+		acedAlert(L"\nError getting object.");
+		return;
+	}
+	// Open the selected object
+	AcDbObjectId pObjId;
+	acdbGetObjectId(pObjId, en);
+
+	AcDbEntity* pEnt;
+	acdbOpenObject(pEnt, pObjId, AcDb::kForWrite);
+	acutPrintf(pEnt->isA()->name());
+
+	// Check if the selected object is a line
+	if (pEnt->isKindOf(AcDbLine::desc()))
+	{
+		// Get the base point
+		ads_point ptBase;
+		if (acedGetPoint(NULL, L"\nSpecify the base point: ", ptBase) != RTNORM)
+		{
+			acedAlert(L"\nError getting base point.");
+			return;
+		}
+		Helpers::printAcGePoint3d(ptBase);
+
+		// Get the new position of the object
+		ads_point ptNew;
+		if (acedGetPoint(NULL, L"\nSpecify the new position: ", ptNew) != RTNORM)
+		{
+			acedAlert(L"\nError getting new position.");
+			return;
+		}
+		Helpers::printAcGePoint3d(ptNew);
+
+		// Calculate the vector
+		AcGeVector3d vecMove(asPnt3d(ptNew) - asPnt3d(ptBase));
+
+		// Move the object to the new position
+		pEnt->transformBy(AcGeMatrix3d::translation(vecMove));
+	}
+	else
+	{
+		acedAlert(L"\nSelected object is not a line.");
+	}
+	// Close the object
+	pEnt->close();
+}
+
+void UserInteractions::ADSK_TEST_ROTATE_OBJECT()
+{
+	// Get the selected object
+	ads_name en;
+	ads_point pt;
+	if (acedEntSel(L"\nSelect an object: ", en, pt) != RTNORM)
+	{
+		acedAlert(L"\nError getting object.");
+		return;
+	}
+	// Open the selected object
+	AcDbObjectId pObjId;
+	acdbGetObjectId(pObjId, en);
+
+	AcDbEntity* pEnt;
+	acdbOpenObject(pEnt, pObjId, AcDb::kForWrite);
+	acutPrintf(pEnt->isA()->name());
+
+	// Get the base point
+	ads_point ptBase;
+	if (acedGetPoint(NULL, L"\nSpecify the base point: ", ptBase) != RTNORM)
+	{
+		acedAlert(L"\nError getting base point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptBase);
+
+	// Get the angle
+	ads_real angle;
+	if (acedGetAngle(ptBase, L"\nSpecify the angle: ", &angle) != RTNORM)
+	{
+		acedAlert(L"\nError getting angle.");
+		return;
+	}
+	// Rotate the object
+	pEnt->transformBy(AcGeMatrix3d::rotation(angle, AcGeVector3d::kZAxis, asPnt3d(ptBase)));
+
+	// Close the object
+	pEnt->close();
+}
+
+void UserInteractions::ADSK_TEST_MIRROR_OBJECT_USING_LINE()
+{
+	// Get the selected object
+	ads_name en;
+	ads_point pt;
+	if (acedEntSel(L"\nSelect an object: ", en, pt) != RTNORM)
+	{
+		acedAlert(L"\nError getting object.");
+		return;
+	}
+	// Open the selected object
+	AcDbObjectId pObjId;
+	acdbGetObjectId(pObjId, en);
+
+	AcDbEntity* pEnt;
+	acdbOpenObject(pEnt, pObjId, AcDb::kForWrite);
+	acutPrintf(pEnt->isA()->name());
+
+	// Get the first point
+	ads_point ptFirst;
+	if (acedGetPoint(NULL, L"\nSpecify the first point: ", ptFirst) != RTNORM)
+	{
+		acedAlert(L"\nError getting first point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptFirst);
+
+	// Get the second point
+	ads_point ptSecond;
+	if (acedGetPoint(ptFirst, L"\nSpecify the second point: ", ptSecond) != RTNORM)
+	{
+		acedAlert(L"\nError getting second point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptSecond);
+
+	// Calculate the mirror line
+	AcGeLine3d mirrorLine(asPnt3d(ptFirst), asPnt3d(ptSecond));
+
+	// Mirror the object
+	pEnt->transformBy(AcGeMatrix3d::mirroring(mirrorLine));
+	
+	// Close the object
+	pEnt->close();
+}
+
+void UserInteractions::ADSK_TEST_SCALE_OBJECT()
+{
+	// Get the selected object
+	ads_name en;
+	ads_point pt;
+	if (acedEntSel(L"\nSelect an object: ", en, pt) != RTNORM)
+	{
+		acedAlert(L"\nError getting object.");
+		return;
+	}
+	// Open the selected object
+	AcDbObjectId pObjId;
+	acdbGetObjectId(pObjId, en);
+
+	AcDbEntity* pEnt;
+	acdbOpenObject(pEnt, pObjId, AcDb::kForWrite);
+	acutPrintf(pEnt->isA()->name());
+
+	// Get the base point
+	ads_point ptBase;
+	if (acedGetPoint(NULL, L"\nSpecify the base point: ", ptBase) != RTNORM)
+	{
+		acedAlert(L"\nError getting base point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptBase);
+
+	// Get the scale factor
+	ads_real scaleFactor;
+	if (acedGetReal(L"\nSpecify the scale factor: ", &scaleFactor) != RTNORM)
+	{
+		acedAlert(L"\nError getting scale factor.");
+		return;
+	}
+	// Scale the object
+	pEnt->transformBy(AcGeMatrix3d::scaling(scaleFactor, asPnt3d(ptBase)));
+
+	// Close the object
+	pEnt->close();
+}
+
 
