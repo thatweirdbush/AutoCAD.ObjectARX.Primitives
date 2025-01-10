@@ -145,7 +145,7 @@ void UserInteractions::ADSK_TEST_GET_ANGLE()
     acutPrintf(L"The angle between the two points is: %f", angle);
 }
 
-void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_SELECTION()
+void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_ENTITY_SELECTION()
 {
 	// Get the selected object
 	ads_name en;
@@ -163,12 +163,153 @@ void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_SELECTION()
 	acdbOpenObject(pEnt, pObjId, AcDb::kForWrite);
 	acutPrintf(pEnt->isA()->name());
 
-	// Change the color of the object to Green
-	pEnt->setColorIndex(3);
-	acutPrintf(L"\nThe color of the %ls has been changed to Green.", pEnt->isA()->name());
+	// Change the color of the object randomly
+	pEnt->setColorIndex(Helpers::getRandColor());
+	acutPrintf(L"\nThe color of the %ls has been changed.", pEnt->isA()->name());
 
 	// Close the object
 	pEnt->close();
+}
+
+void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_SELECTION_SET()
+{
+	// Display a custom prompt to the user
+	acutPrintf(L"\nSelect LINE objects on Layer 0 to change color to Green:");
+
+	// Define the resbufs
+	struct resbuf rbLine;
+	struct resbuf rbLayer;
+
+	// Initialize the Line and Layer resbufs
+	rbLine.restype = 0;
+	rbLine.resval.rstring = L"LINE";
+	rbLine.rbnext = &rbLayer; // Link to the next resbuf
+
+	rbLayer.restype = 8;
+	rbLayer.resval.rstring = L"0";
+	rbLayer.rbnext = NULL; // End of the resbufs
+
+	// Get the selection set
+	ads_name ss;
+	ads_name ent;
+
+	if (acedSSGet(NULL, NULL, NULL, &rbLine, ss) != RTNORM)
+	{
+		acedAlert(L"\nError getting selection set.");
+		return;
+	}
+
+	// Get the length of the selection set
+	int length;
+	acedSSLength(ss, &length);
+
+	// Change the color of the objects to Green
+	AcDbObjectId objId = AcDbObjectId::kNull;
+	AcDbEntity* pEnt = NULL;
+	uint16_t color = Helpers::getRandColor();
+
+	for (int i = 0; i < length; i++)
+	{
+		acedSSName(ss, i, ent);
+		acdbGetObjectId(objId, ent);
+		acdbOpenObject(pEnt, objId, AcDb::kForWrite);
+
+		// Change entity color randomly
+		pEnt->setColorIndex(color);
+		pEnt->close();
+	}
+	acedSSFree(ss);
+	acutPrintf(L"\nThe color of %d selected objects has been changed.", length);
+}
+
+void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_SELECTION_SET_EXTENDED()
+{
+	// Define the keywords
+	wchar_t keywords[] = { L"A I P W WP C CP F" };
+
+	// Get the keyword from the user
+	int keywordIndex;
+	if (acedInitGet(NULL, L"A I P W WP C CP F") == RTNORM)
+	{
+		keywordIndex = acedGetKword(L"\nSpecify the selection mode [A/I/P/W/WP/C/CP/F]: ", keywords);
+	}
+	else
+	{
+		acedAlert(L"\nError getting keyword.");
+		return;
+	}
+
+	ads_name ss;
+	ads_name ent;
+
+	// Options for point list when using modes like WP, CP, F
+	ads_point pt1 = { 0.0, 0.0, 0.0 };
+	ads_point pt2 = { 5'000.0, 5'000.0, 0.0 };
+	ads_point pt3 = { 10'000.0, 5'000.0, 0.0 };
+	ads_point pt4 = { 5'000.0, 0.0, 0.0 };
+	struct resbuf* pointlist = acutBuildList(
+		RTPOINT, pt1, RTPOINT, pt2, RTPOINT, pt3, RTPOINT, pt4, 0);
+
+	int result;
+	if (wcscmp(keywords, L"W") == 0) {
+		result = acedSSGet(L"W", pt1, pt2, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"WP") == 0) {
+		result = acedSSGet(L"WP", pointlist, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"C") == 0) {
+		result = acedSSGet(L"C", pt1, pt2, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"CP") == 0) {
+		result = acedSSGet(L"CP", pointlist, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"F") == 0) {
+		result = acedSSGet(L"F", pointlist, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"A") == 0) {
+		result = acedSSGet(L"A", NULL, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"I") == 0) {
+		result = acedSSGet(L"I", NULL, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"P") == 0) {
+		result = acedSSGet(L"P", NULL, NULL, NULL, ss);
+	}
+	else if (wcscmp(keywords, L"") == 0) {
+		result = acedSSGet(L"A", NULL, NULL, NULL, ss);
+	}
+	else {
+		result = acedSSGet(L"A", NULL, NULL, NULL, ss);
+	}
+	// Free the point list
+	acutRelRb(pointlist);
+
+	if (result != RTNORM) {
+		acedAlert(L"\nError getting selection set.");
+		return;
+	}
+
+	// Get the length of the selection set
+	int length;
+	acedSSLength(ss, &length);
+
+	// Change the color of the objects to Green
+	AcDbObjectId objId = AcDbObjectId::kNull;
+	AcDbEntity* pEnt = NULL;
+	uint16_t color = Helpers::getRandColor();
+
+	for (int i = 0; i < length; i++)
+	{
+		acedSSName(ss, i, ent);
+		acdbGetObjectId(objId, ent);
+		acdbOpenObject(pEnt, objId, AcDb::kForWrite);
+
+		// Change entity color randomly
+		pEnt->setColorIndex(color);
+		pEnt->close();
+	}
+	acedSSFree(ss);
+	acutPrintf(L"\nThe color of %d selected objects has been changed.", length);
 }
 
 void UserInteractions::ADSK_TEST_MOVE_OBJECT_USING_GET_POINT()
@@ -217,7 +358,7 @@ void UserInteractions::ADSK_TEST_MOVE_OBJECT_USING_GET_POINT()
 	pEnt->close();
 }
 
-void UserInteractions::ADSK_TEST_MOVE_OBJECT_WITH_ALLOWED_CLASS()
+void UserInteractions::ADSK_TEST_MOVE_LINE_ONLY()
 {
 	// Get the selected object
 	ads_name en;
@@ -398,4 +539,54 @@ void UserInteractions::ADSK_TEST_SCALE_OBJECT()
 	pEnt->close();
 }
 
+void UserInteractions::ADSK_TEST_CALCULATE_POLYGON_AREA()
+{
+	// Get the number of sides
+	int sides;
+	if (acedGetInt(L"\nEnter the number of sides: ", &sides) != RTNORM)
+	{
+		acedAlert(L"\nError getting number of sides.");
+		return;
+	}
 
+	// Create Polygon's points
+	ads_point* points = new ads_point[sides];
+	AcDbPolyline* pPoly = new AcDbPolyline(sides);
+
+	// Get the points
+	for (int i = 0; i < sides; i++)
+	{
+		if (acedGetPoint(NULL, L"\nSpecify a point: ", points[i]) != RTNORM)
+		{
+			acedAlert(L"\nError getting point.");
+			return;
+		}
+		Helpers::printAcGePoint3d(points[i]);
+		pPoly->addVertexAt(i, asPnt2d(points[i]));
+	}
+	pPoly->setClosed(Adesk::kTrue);
+
+	// Add the polygon to the model space
+	AcDbBlockTable* pBlockTable;
+	acdbHostApplicationServices()->workingDatabase()
+		->getSymbolTable(pBlockTable, AcDb::kForRead);
+
+	AcDbBlockTableRecord* pBlockTableRecord;
+	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord,
+		AcDb::kForWrite);
+
+	pBlockTable->close();
+	AcDbObjectId polyId;
+	pBlockTableRecord->appendAcDbEntity(polyId, pPoly);
+	pBlockTableRecord->close();
+
+	// Calculate the area of the polygon
+	double area = Helpers::CalculateAreaOfPolygon(pPoly);
+
+	// Display the area
+	acutPrintf(L"\nThe area of the polygon is: %f", area);
+
+	// Free the memory
+	delete[] points;
+	pPoly->close();
+}
