@@ -37,11 +37,11 @@ void PrimitiveEntities::ADSK_TEST_CREATE_CIRCLE()
 
 	AcDbCircle* pCirc = new AcDbCircle(center, normal, radius);
 
-	AcDbBlockTable* pBlockTable;
+	AcDbBlockTable* pBlockTable = nullptr;
 	acdbHostApplicationServices()->workingDatabase()
 		->getSymbolTable(pBlockTable, AcDb::kForRead);
 
-	AcDbBlockTableRecord* pBlockTableRecord;
+	AcDbBlockTableRecord* pBlockTableRecord = nullptr;
 	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord,
 		AcDb::kForWrite);
 

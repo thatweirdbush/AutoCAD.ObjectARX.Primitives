@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD primitive entities drawing functions
 //-----------------------------------------------------------------------------
-class PrimitiveEntities : public AcRxArxApp
+class PrimitiveEntities
 {
 public:
 	static void ADSK_TEST_CREATE_LINE();

@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD user interactions functions
 //-----------------------------------------------------------------------------
-class UserInteractions : public AcRxArxApp
+class UserInteractions
 {
 public:
 	static void ADSK_TEST_GET_NAME_USING_GET_STRING();
