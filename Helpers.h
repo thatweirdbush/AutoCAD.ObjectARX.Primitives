@@ -17,4 +17,3 @@ public:
 	static AcGePoint3d getLastVertex(AcDbPolyline* polyline);
 	static bool removeLastVertex(AcDbPolyline*& polyline);
 };
-

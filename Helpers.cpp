@@ -105,3 +105,4 @@ bool Helpers::removeLastVertex(AcDbPolyline*& polyline) {
 	polyline->removeVertexAt(polyline->numVerts() - 1);
 	return true;
 }
+
