@@ -14,5 +14,7 @@ public:
 	static uint16_t getRandColor();
 	static double CalculateAreaOfPolygon(AcDbPolyline* pPolyline);
 	static bool IsPointEqual(const AcGePoint3d& pt1, const AcGePoint3d& pt2);
+	static AcGePoint3d getLastVertex(AcDbPolyline* polyline);
+	static bool removeLastVertex(AcDbPolyline*& polyline);
 };
 

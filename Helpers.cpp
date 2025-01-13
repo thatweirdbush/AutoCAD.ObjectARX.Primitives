@@ -89,3 +89,19 @@ bool Helpers::IsPointEqual(const AcGePoint3d& pt1, const AcGePoint3d& pt2) {
 	// Using distance and tolerance to check if two points are equal
 	return pt1.distanceTo(pt2) < AcGeContext::gTol.equalPoint();
 }
+
+AcGePoint3d Helpers::getLastVertex(AcDbPolyline* polyline) {
+	AcGePoint3d lastVertex;
+	polyline->getPointAt(polyline->numVerts() - 1, lastVertex);
+	return lastVertex;
+}
+
+bool Helpers::removeLastVertex(AcDbPolyline*& polyline) {
+	if (polyline->numVerts() < 2) {
+		acutPrintf(L"Cannot remove vertex. The polyline must have at least 2 vertices to be executed.\n");
+		return false;
+	}
+	// Remove the last vertex
+	polyline->removeVertexAt(polyline->numVerts() - 1);
+	return true;
+}

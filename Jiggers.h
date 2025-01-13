@@ -51,6 +51,31 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+//----- Here you can define AutoCAD PolylineJig class
+//-----------------------------------------------------------------------------
+class PolylineJig : public AcEdJig
+{
+private:
+	AcGePoint3d _startPoint;
+	AcGePoint3d _nextPoint;
+	AcDbPolyline* _polyline;
+
+public:
+	PolylineJig(const AcGePoint3d& startPoint);
+	~PolylineJig();
+	virtual AcDbEntity* entity() const override;
+
+protected:
+	virtual DragStatus sampler() override;
+	virtual Adesk::Boolean update() override;
+	virtual void addDummyVertex();
+	virtual void append();
+
+public:
+	static void jig();
+};
+
+//-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD Jiggers functions
 //-----------------------------------------------------------------------------
 class Jiggers
@@ -62,6 +87,10 @@ public:
 
 	static void ADSK_TEST_CREATE_CIRCLE_JIG() {
 		CircleJig::jig();
+	};
+
+	static void ADSK_TEST_CREATE_POLYLINE_JIG() {
+		PolylineJig::jig();
 	};
 };
 

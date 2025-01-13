@@ -148,8 +148,8 @@ void CircleJig::jig() {
 	while (true)
 	{
 		CircleJig jig(center);
-
 		DragStatus status = jig.drag();
+
 		if (status == AcEdJig::kNormal) {
 			AcDbBlockTable* pBlockTable;
 			acdbHostApplicationServices()->workingDatabase()
@@ -179,6 +179,106 @@ void CircleJig::jig() {
 	}
 }
 
+//-----------------------------------------------------------------------------
+//----- This will define the methods of the PolylineJig class
+//-----------------------------------------------------------------------------
+PolylineJig::PolylineJig(const AcGePoint3d& startPoint)
+{
+	_startPoint = startPoint;
+	_nextPoint = startPoint;
+	_polyline = new AcDbPolyline();  // Initialize the AcDbPolyline
+	_polyline->addVertexAt(0, AcGePoint2d(_startPoint.x, _startPoint.y));
+	_polyline->setClosed(Adesk::kFalse);  // Open polyline
+	addDummyVertex();
+}
+
+PolylineJig::~PolylineJig() {
+	_polyline->close();  // Close the AcDbPolyline
+}
+
+AcDbEntity* PolylineJig::entity() const {
+	return _polyline;
+}
+
+AcEdJig::DragStatus PolylineJig::sampler() {
+	AcGePoint3d newPoint;
+	DragStatus status = acquirePoint(newPoint);
+
+	if (status != kNormal) {
+		return kCancel;
+	}
+	_nextPoint = newPoint;
+	return kNormal;
+}
+
+Adesk::Boolean PolylineJig::update() {
+	if (!_polyline) {
+		return Adesk::kFalse;
+	}
+	_polyline->setPointAt(
+		_polyline->numVerts() - 1,
+		AcGePoint2d(_nextPoint.x, _nextPoint.y)
+	);
+	return Adesk::kTrue;
+}
+
+void PolylineJig::addDummyVertex() {
+	_polyline->addVertexAt(
+		_polyline->numVerts(),
+		AcGePoint2d(0.0, 0.0)
+	);
+}
+
+void PolylineJig::append() {
+	AcDbBlockTable* pBlockTable;
+	acdbHostApplicationServices()->workingDatabase()
+		->getSymbolTable(pBlockTable, AcDb::kForRead);
+
+	AcDbBlockTableRecord* pBlockTableRecord;
+	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord,
+		AcDb::kForWrite);
+
+	pBlockTable->close();
+	pBlockTableRecord->appendAcDbEntity(_polyline);
+
+	acutPrintf(L"\nPolyline created successfully.");
+	_polyline->close();
+	pBlockTableRecord->close();
+}
+
+void PolylineJig::jig() {
+	AcGePoint3d startPoint;
+	ads_point pt;
+
+	if (acedGetPoint(NULL, L"\nSpecify start point: ", pt) != RTNORM) {
+		acutPrintf(L"\nNo point selected.");
+		return;
+	}
+	startPoint.set(pt[0], pt[1], pt[2]);
+	Helpers::printAcGePoint3d(startPoint);
+
+	PolylineJig jig(startPoint);
+	acutPrintf(L"\nSpecify next point: ");
+	while (true)
+	{
+		DragStatus status = jig.drag();
+		if (status == AcEdJig::kNormal) {
+			jig.addDummyVertex();
+		}
+		else if (status == AcEdJig::kCancel) {
+			Helpers::removeLastVertex(jig._polyline);
+			if (jig._polyline->numVerts() > 1) {
+				jig.append();
+			}
+			else {
+				acutPrintf(L"\nCommand canceled.");
+			}
+			break;
+		}
+		else
+			acutPrintf(L"\nNext point must be different. Specify next point: ");
+	}
+}
 
 
 
