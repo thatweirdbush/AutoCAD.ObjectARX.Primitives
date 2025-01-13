@@ -145,6 +145,52 @@ void UserInteractions::ADSK_TEST_GET_ANGLE()
     acutPrintf(L"The angle between the two points is: %f", angle);
 }
 
+/// <summary>
+/// Create a rectangle using getCorner
+/// </summary>
+void UserInteractions::ADSK_TEST_GET_CORNER()
+{
+	// Get the first point
+	ads_point ptStart;
+	if (acedGetPoint(NULL, L"\nSpecify the first point: ", ptStart) != RTNORM)
+	{
+		acedAlert(L"\nError getting first point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptStart);
+	// Get the second point
+	ads_point ptEnd;
+	if (acedGetCorner(ptStart, L"\nSpecify the second point: ", ptEnd) != RTNORM)
+	{
+		acedAlert(L"\nError getting second point.");
+		return;
+	}
+	Helpers::printAcGePoint3d(ptEnd);
+
+	// Create a rectangle
+	AcDbPolyline* pPoly = new AcDbPolyline(4);
+	pPoly->addVertexAt(0, asPnt2d(ptStart));
+	pPoly->addVertexAt(1, AcGePoint2d(ptEnd[X], ptStart[Y]));
+	pPoly->addVertexAt(2, asPnt2d(ptEnd));
+	pPoly->addVertexAt(3, AcGePoint2d(ptStart[X], ptEnd[Y]));
+	pPoly->setClosed(Adesk::kTrue);
+
+	// Add the rectangle to the model space
+	AcDbBlockTable* pBlockTable;
+	acdbHostApplicationServices()->workingDatabase()
+		->getSymbolTable(pBlockTable, AcDb::kForRead);
+
+	AcDbBlockTableRecord* pBlockTableRecord;
+	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord,
+		AcDb::kForWrite);
+
+	pBlockTable->close();
+	AcDbObjectId polyId;
+	pBlockTableRecord->appendAcDbEntity(polyId, pPoly);
+	pBlockTableRecord->close();
+	pPoly->close();
+}
+
 void UserInteractions::ADSK_TEST_CHANGE_COLOR_USING_GET_ENTITY_SELECTION()
 {
 	// Get the selected object

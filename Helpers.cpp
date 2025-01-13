@@ -16,7 +16,7 @@ void Helpers::printAcGePoint3d(const AcGePoint3d& pt)
 	swprintf_s(message, 100, L"(%f, %f, %f)", pt.x, pt.y, pt.z);
 
 	// Display the formatted string to the command line
-	acutPrintf(L"Point: %s\n", message);
+	acutPrintf(message);
 }
 
 void Helpers::printAcGePoint3d(const ads_point& pt)
@@ -26,7 +26,7 @@ void Helpers::printAcGePoint3d(const ads_point& pt)
 	swprintf_s(message, 100, L"(%f, %f, %f)", pt[X], pt[Y], pt[Z]);
 
 	// Display the formatted string to the command line
-	acutPrintf(L"Point: %s\n", message);
+	acutPrintf(message);
 }
 
 double Helpers::calcDistance(const ads_point& pt1, const ads_point& pt2)
