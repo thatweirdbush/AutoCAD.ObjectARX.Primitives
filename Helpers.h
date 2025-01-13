@@ -13,5 +13,6 @@ public:
 	static double calcDistance(const ads_point& pt1, const ads_point& pt2);
 	static uint16_t getRandColor();
 	static double CalculateAreaOfPolygon(AcDbPolyline* pPolyline);
+	static bool IsPointEqual(const AcGePoint3d& pt1, const AcGePoint3d& pt2);
 };
 

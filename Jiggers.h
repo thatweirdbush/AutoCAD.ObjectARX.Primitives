@@ -30,6 +30,25 @@ public:
 //-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD CircleJig class
 //-----------------------------------------------------------------------------
+class CircleJig : public AcEdJig
+{
+private:
+	AcGePoint3d _center;
+	double _radius;
+	AcDbCircle* _circle;
+
+public:
+	CircleJig(const AcGePoint3d& center);
+	~CircleJig();
+	virtual AcDbEntity* entity() const override;
+
+protected:
+	virtual DragStatus sampler() override;
+	virtual Adesk::Boolean update() override;
+
+public:
+	static void jig();
+};
 
 //-----------------------------------------------------------------------------
 //----- Here you can define AutoCAD Jiggers functions
@@ -39,6 +58,10 @@ class Jiggers
 public:
 	static void ADSK_TEST_CREATE_LINE_JIG() {
 		LineJig::jig();
+	};
+
+	static void ADSK_TEST_CREATE_CIRCLE_JIG() {
+		CircleJig::jig();
 	};
 };
 

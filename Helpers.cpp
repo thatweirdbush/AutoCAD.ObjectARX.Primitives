@@ -84,3 +84,8 @@ double Helpers::CalculateAreaOfPolygon(AcDbPolyline* pPolyline) {
 
 	return fabs(area) / 2.0;
 }
+
+bool Helpers::IsPointEqual(const AcGePoint3d& pt1, const AcGePoint3d& pt2) {
+	// Using distance and tolerance to check if two points are equal
+	return pt1.distanceTo(pt2) < AcGeContext::gTol.equalPoint();
+}
