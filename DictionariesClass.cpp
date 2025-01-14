@@ -35,8 +35,7 @@ void DictionariesClass::ADSK_TEST_LIST_NOD()
 	else
 	{
 		acutPrintf(L"\nError getting named object dictionary.");
-	}
-	pDb = nullptr;
+	}	
 }
 
 void DictionariesClass::ADSK_TEST_ADD_NOD()
@@ -68,8 +67,7 @@ void DictionariesClass::ADSK_TEST_ADD_NOD()
 	else
 	{
 		acutPrintf(L"\nError getting named object dictionary.");
-	}
-	pDb = nullptr;
+	}	
 }
 
 void DictionariesClass::ADSK_TEST_ADD_NOD_DATA()
@@ -88,17 +86,18 @@ void DictionariesClass::ADSK_TEST_ADD_NOD_DATA()
 		if (pNOD->has(customDictName))
 		{
 			pNOD->getAt(customDictName, pDict, AcDb::kForWrite);
+			pNOD->close();
 		}
 		else
 		{
-			acutPrintf(L"\nCustom dictionary does not exist.");
 			pNOD->close();
-			pDb = nullptr;
+			acutPrintf(L"\nCustom dictionary does not exist.");
 			return;
 		}
+
 		// Create a new Xrecord
 		AcDbXrecord* pXRec = new AcDbXrecord();
-		AcDbObjectId xRecId;
+		AcDbObjectId xRecId = AcDbObjectId::kNull;
 
 		// Create a resbuf list
 		resbuf* pResBuf = acutBuildList(
@@ -116,14 +115,12 @@ void DictionariesClass::ADSK_TEST_ADD_NOD_DATA()
 		pDict->setAt(customXRecName, pXRec, xRecId);
 		pDict->close();
 		pXRec->close();
-		pNOD->close();
 		acutPrintf(L"\nNew Xrecord named \"%s\" added to \"%s\" dictionary.", customXRecName, customDictName);
 	}
 	else
 	{
 		acutPrintf(L"\nError getting named object dictionary.");
-	}
-	pDb = nullptr;
+	}	
 }
 
 void DictionariesClass::ADSK_TEST_READ_NOD()
@@ -133,8 +130,7 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 
 	AcDbDictionary* pNOD = nullptr;
 	if (acdbOpenObject(pNOD, pDb->namedObjectsDictionaryId(), AcDb::kForRead) != Acad::eOk)
-	{
-		pDb = nullptr;
+	{		
 		acutPrintf(L"\nError getting named object dictionary.");
 		return;
 	}
@@ -143,8 +139,7 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 	if (!pNOD->has(customDictName))
 	{
 		acutPrintf(L"\nThe dictionary \"%s\" doesn't exist!", customDictName);
-		pNOD->close();
-		pDb = nullptr;
+		pNOD->close();		
 		return;
 	}
 
@@ -152,8 +147,7 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 	if (pNOD->getAt(customDictName, pDict, AcDb::kForRead) != Acad::eOk)
 	{
 		acutPrintf(L"\nError getting \"%s\" dictionary.", customDictName);
-		pNOD->close();
-		pDb = nullptr;
+		pNOD->close();		
 		return;
 	}
 	pNOD->close();
@@ -162,8 +156,7 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 	if (!pDict->has(customXRecName))
 	{
 		acutPrintf(L"\nThe Xrecord \"%s\" doesn't exist!", customXRecName);
-		pDict->close();
-		pDb = nullptr;
+		pDict->close();		
 		return;
 	}
 
@@ -171,8 +164,7 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 	if (pDict->getAt(customXRecName, pXRec, AcDb::kForRead) != Acad::eOk)
 	{
 		acutPrintf(L"\nError getting \"%s\" Xrecord.", customXRecName);
-		pDict->close();
-		pDb = nullptr;
+		pDict->close();		
 		return;
 	}
 	pDict->close();
@@ -203,10 +195,8 @@ void DictionariesClass::ADSK_TEST_READ_NOD()
 			}
 		}
 		acutRelRb(pResBuf);
-	}
-	pDb = nullptr;
+	}	
 }
-
 
 void DictionariesClass::ADSK_TEST_DEL_NOD()
 {
@@ -216,28 +206,31 @@ void DictionariesClass::ADSK_TEST_DEL_NOD()
 
 	// Get the named object dictionary
 	AcDbDictionary* pNOD = nullptr;
-	if (acdbOpenObject(pNOD, pDb->namedObjectsDictionaryId(), AcDb::kForWrite) == Acad::eOk)
-	{
-		// Get the custom dictionary
-		const wchar_t* customDictName = L"MyCustomDictionary";
-
-		if (pNOD->has(customDictName))
-		{
-			AcDbDictionary* customDict;
-			pNOD->getAt(customDictName, customDict, AcDb::kForWrite);
-			customDict->erase();
-			customDict->close();
-			acutPrintf(L"\nCustom dictionary deleted successfully!");
-		}
-		else
-		{
-			acutPrintf(L"\nCustom dictionary does not exist.");
-		}
-		pNOD->close();
-	}
-	else
+	if (acdbOpenObject(pNOD, pDb->namedObjectsDictionaryId(), AcDb::kForWrite) != Acad::eOk)
 	{
 		acutPrintf(L"\nError getting named object dictionary.");
+		return;
 	}
-	pDb = nullptr;
+
+	// Get the custom dictionary
+	const wchar_t* customDictName = L"MyCustomDictionary";
+	if (!pNOD->has(customDictName))
+	{
+		acutPrintf(L"\nCustom dictionary does not exist.");
+		pNOD->close();
+		return;
+	}
+
+	// Delete the custom dictionary
+	AcDbDictionary* customDict = nullptr;
+	if (pNOD->getAt(customDictName, customDict, AcDb::kForWrite) != Acad::eOk)
+	{
+		acutPrintf(L"\nError getting custom dictionary.");
+		pNOD->close();
+		return;
+	}
+	customDict->erase();
+	customDict->close();
+	pNOD->close();
+	acutPrintf(L"\nCustom dictionary deleted successfully!");
 }
