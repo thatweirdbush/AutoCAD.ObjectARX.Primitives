@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="acrxEntryPoint.cpp" />
+    <ClCompile Include="DictionariesClass.cpp" />
     <ClCompile Include="DocData.cpp" />
     <ClCompile Include="FirstArxProject.cpp" />
     <ClCompile Include="Helpers.cpp" />
@@ -25,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="DictionariesClass.h" />
     <ClInclude Include="DocData.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Jiggers.h" />
