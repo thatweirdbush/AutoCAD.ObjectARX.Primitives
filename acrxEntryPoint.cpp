@@ -28,6 +28,7 @@
 #include "UserInteractions.h"
 #include "Jiggers.h"
 #include "DictionariesClass.h"
+#include "SelectionSetUsages.h"
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("DD")
@@ -182,6 +183,9 @@ ACED_ARXCOMMAND_ENTRY_AUTO(DictionariesClass, ADSK, _TEST_ADD_NOD_DATA, TEST_ADD
 ACED_ARXCOMMAND_ENTRY_AUTO(DictionariesClass, ADSK, _TEST_READ_NOD, TEST_READ_NOD, ACRX_CMD_MODAL, NULL)
 ACED_ARXCOMMAND_ENTRY_AUTO(DictionariesClass, ADSK, _TEST_DEL_NOD, TEST_DEL_NOD, ACRX_CMD_MODAL, NULL)
 
+//----- Here you can declare AutoCAD commands from SelectionSetUsages class
+ACED_ARXCOMMAND_ENTRY_AUTO(SelectionSetUsages, ADSK, _TEST_SSGET_CROSSING, TEST_SSGET_CROSSING, ACRX_CMD_MODAL, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(SelectionSetUsages, ADSK, _TEST_SSGET_FENCE, TEST_SSGET_FENCE, ACRX_CMD_MODAL, NULL)
 
 //ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, DDMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
 //ACED_ARXCOMMAND_ENTRY_AUTO(CFirstArxProjectApp, DDMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)

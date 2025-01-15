@@ -18,6 +18,7 @@
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Jiggers.cpp" />
     <ClCompile Include="PrimitiveEntities.cpp" />
+    <ClCompile Include="SelectionSetUsages.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -32,6 +33,7 @@
     <ClInclude Include="Jiggers.h" />
     <ClInclude Include="PrimitiveEntities.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SelectionSetUsages.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="UserInteractions.h" />
   </ItemGroup>
